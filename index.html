@@ -39,6 +39,100 @@
       text-align: center;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       animation: fadeIn 0.5s ease;
+      position: relative;
+    }
+
+    .dark-mode-toggle {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      background: #f7fafc;
+      border: 2px solid #e2e8f0;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .dark-mode-toggle:hover {
+      transform: scale(1.1);
+      border-color: #667eea;
+    }
+
+    body.dark-mode {
+      background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    }
+
+    body.dark-mode .welcome-screen,
+    body.dark-mode .quiz-screen,
+    body.dark-mode .results-screen {
+      background: rgba(45, 55, 72, 0.95);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    body.dark-mode .welcome-title,
+    body.dark-mode .results-title,
+    body.dark-mode .question-text {
+      color: #e2e8f0;
+    }
+
+    body.dark-mode .welcome-subtitle,
+    body.dark-mode .results-message,
+    body.dark-mode .progress-info,
+    body.dark-mode .stat-label {
+      color: #cbd5e0;
+    }
+
+    body.dark-mode .quiz-info {
+      background: #2d3748;
+      border-right-color: #667eea;
+    }
+
+    body.dark-mode .quiz-info-item {
+      color: #e2e8f0;
+    }
+
+    body.dark-mode .option-btn {
+      background: #2d3748;
+      border-color: #4a5568;
+      color: #e2e8f0;
+    }
+
+    body.dark-mode .option-btn:hover {
+      background: #374151;
+      border-color: #667eea;
+    }
+
+    body.dark-mode .stat-card {
+      background: #2d3748;
+      border-top-color: #667eea;
+    }
+
+    body.dark-mode .stat-value {
+      color: #e2e8f0;
+    }
+
+    body.dark-mode .quiz-header {
+      border-bottom-color: #4a5568;
+    }
+
+    body.dark-mode .student-badge {
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+
+    body.dark-mode .progress-bar-container {
+      background: #4a5568;
+    }
+
+    body.dark-mode .dark-mode-toggle {
+      background: #4a5568;
+      border-color: #667eea;
     }
     
     @keyframes fadeIn {
@@ -123,6 +217,21 @@
       margin-bottom: 2rem;
       padding-bottom: 1rem;
       border-bottom: 3px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .student-badge {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0.6rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
     
     .progress-info {
@@ -403,6 +512,16 @@
       .final-score {
         font-size: 3rem;
       }
+
+      .quiz-header {
+        justify-content: center;
+        text-align: center;
+      }
+
+      .student-badge {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
@@ -412,11 +531,11 @@
  <body>
   <div class="container">
    <main>
-    <div class="welcome-screen" id="welcome-screen">
+    <div class="welcome-screen" id="welcome-screen"><button class="dark-mode-toggle" onclick="toggleDarkMode()" id="dark-toggle-welcome" title="تبديل الوضع الليلي"> 🌙 </button>
      <div class="welcome-icon">
       📚
      </div>
-     <h1 class="welcome-title" id="main-title">اختبار تاريخ العراق التفاعلي</h1>
+     <h1 class="welcome-title" id="main-title">اختبار تار��خ العراق التفاعلي</h1>
      <p class="welcome-subtitle" id="subtitle">اختبر معلوماتك حول فترة حكم حزب البعث من خلال 50 سؤالاً متنوعاً</p>
      <div class="quiz-info">
       <div class="quiz-info-item"><span>📝</span> <span>30 سؤال اختيار متعدد</span>
@@ -427,11 +546,13 @@
       </div>
       <div class="quiz-info-item" style="margin-top: 1rem; padding-top: 1rem; border-top: 2px solid #e2e8f0;"><span>👨‍🎓</span> <span>إعداد الطالب: مقتدى الكناني</span>
       </div>
-     </div><button class="start-btn" id="start-btn" onclick="startQuiz()">ابدأ الاختبار الآن</button>
+     </div><button class="start-btn" id="start-btn" onclick="startQuiz()">ابد�� الاختبار الآن</button>
     </div>
-    <div class="quiz-screen" id="quiz-screen">
+    <div class="quiz-screen" id="quiz-screen"><button class="dark-mode-toggle" onclick="toggleDarkMode()" id="dark-toggle-quiz" title="تبديل الوضع الليلي" style="position: fixed; top: 1.5rem; left: 1.5rem;"> 🌙 </button>
      <div class="quiz-header">
       <div class="progress-info"><span>السؤال </span> <span id="current-question">1</span> <span> من </span> <span id="total-questions">50</span>
+      </div>
+      <div class="student-badge"><span>👨‍🎓</span> <span>الطالب: مقتدى الكناني</span>
       </div>
       <div class="score-badge"><span>النقاط: </span> <span id="current-score">0</span>
       </div>
@@ -441,15 +562,15 @@
      </div>
      <div class="question-card">
       <div class="question-number" id="question-number">
-       السؤال 1
+       السؤ��ل 1
       </div>
       <div class="question-text" id="question-text"></div>
       <div class="options-container" id="options-container"></div>
      </div><button class="next-btn" id="next-btn" onclick="nextQuestion()"> السؤال التالي ← </button>
     </div>
-    <div class="results-screen" id="results-screen">
+    <div class="results-screen" id="results-screen"><button class="dark-mode-toggle" onclick="toggleDarkMode()" id="dark-toggle-results" title="تبديل الوضع الليلي"> 🌙 </button>
      <div class="results-icon" id="results-icon">
-      🎊
+      ���
      </div>
      <h2 class="results-title">انتهى الاختبار!</h2>
      <div class="final-score" id="final-score">
@@ -502,7 +623,7 @@
     const quizData = [
       {
         type: "mcq",
-        q: "في أي سنة حدث انقلاب تموز ال��ي سيطر به حزب البعث على الحكم؟",
+        q: "في أي سنة حدث انقلاب تموز الذي سيطر به حزب البعث على الحكم؟",
         correct: "1968",
         options: ["1963", "1979", "1968", "1958"]
       },
@@ -528,7 +649,7 @@
         type: "mcq",
         q: "ماذا عانت الفئات الثقافية والعلمية في عهد النظام؟",
         correct: "تصفية وهجرة قسرية",
-        options: ["تكريم ودعم غير محدود", "تصفية وهجرة قسرية", "إشراكهم في الحكم والقرارات", "منحهم حصانات دبلوماسية"]
+        options: ["تكريم ودعم غير محدود", "تصفية وهجرة قسرية", "إشرا��هم في الحكم والقرارات", "منحهم حصانات دبلوماسية"]
       },
       {
         type: "mcq",
@@ -544,7 +665,7 @@
       },
       {
         type: "mcq",
-        q: "أي ممارسة إعلامية كانت ممنوعة؟",
+        q: "أي م��ار��ة إعلامية كانت ممنوعة؟",
         correct: "التقاط الفضائيات",
         options: ["إصدار المجلات الرسمية", "بث الإذاعة المحلية", "التقاط الفضائيات", "قراءة الصحف الحكومية"]
       },
@@ -552,7 +673,7 @@
         type: "mcq",
         q: "أي مجموعات تعرضت لإسقاط الجنسية؟",
         correct: "الأقليات والمعارضون",
-        options: ["أعضاء الحزب الحاكم", "العسكريون المتقاعدون", "الأقليات والمعارضون", "ال��لاب المبتعثون للدراسة"]
+        options: ["أعضاء الحزب الحاكم", "العسكريون المتقاعدون", "الأقليات والمعارضون", "الشباب المبتعثون للدراسة"]
       },
       {
         type: "mcq",
@@ -575,8 +696,8 @@
       {
         type: "mcq",
         q: "أي من الجرائم كان مرتبطا بمحاولة البعث تغيير التركيبة السكانية؟",
-        correct: "التهجير القسري",
-        options: ["فتح ��لحدود", "التجنيس الجماعي", "التهجير القسري", "بناء المساكن العشوائية"]
+        correct: "التهجي�� القسري",
+        options: ["فتح الحدود", "التجنيس الجماعي", "التهجير القسري", "بناء المساكن العشوائية"]
       },
       {
         type: "mcq",
@@ -605,8 +726,8 @@
       {
         type: "mcq",
         q: "أي من الجرائم التالية ارتكبها البعث في محافظة الأنبار؟",
-        correct: "الاعتقالات والإعدامات التعسفية",
-        options: ["دعم مشاريع المياه الإقليمية", "الاعتقالات والإعدامات التعسفية", "دعم شيوخ العشائر", "توزيع الأ��اضي الزراعية"]
+        correct: "الاعتقالات والإعداما�� الت��سفية",
+        options: ["دعم مشاريع المياه الإقليمية", "الاعتقالات والإعدامات التعسفية", "دعم شيوخ العشائر", "توزيع الأراضي الزراعية"]
       },
       {
         type: "mcq",
@@ -628,7 +749,7 @@
       },
       {
         type: "mcq",
-        q: "أي من الجرائم التالية ارتكبها البعث ضد سكان الجنوب؟",
+        q: "أي من الجرائم التالية ارت��بها البعث ضد سكان الجنوب؟",
         correct: "القمع الطائفي",
         options: ["تدمير البنية التحتية التعليمية", "القمع الطائفي", "منعهم من السفر للخارج", "إيقاف الدعم الحكومي للمحاصيل"]
       },
@@ -722,7 +843,7 @@
       },
       {
         type: "tf",
-        q: "الاعتقالات التعسفية والإعدامات كانت من أدوات الترهيب لدى البعث.",
+        q: "الاعتقالات التعسفية والإعدامات كانت ��ن أدوات الترهيب لدى البعث.",
         correct: "صح"
       },
       {
@@ -752,7 +873,7 @@
       },
       {
         type: "tf",
-        q: "النظام كان يدعم التعليم والثقافة الحرة.",
+        q: "ا��نظام كان يدعم التعليم والثقافة الحرة.",
         correct: "خطأ"
       },
       {
@@ -767,7 +888,7 @@
       },
       {
         type: "tf",
-        q: "التعذيب والإعدامات لم تستخدم للسيطرة على المجتمع.",
+        q: "التفجيرات والإعدامات لم تستخدم للسيطرة على المجتمع.",
         correct: "خطأ"
       },
       {
@@ -787,6 +908,33 @@
     let selectedAnswer = null;
     let answered = false;
     let shuffledQuizData = [];
+    let isDarkMode = false;
+
+    function toggleDarkMode() {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark-mode');
+      
+      const allToggles = document.querySelectorAll('.dark-mode-toggle');
+      allToggles.forEach(toggle => {
+        toggle.textContent = isDarkMode ? '☀️' : '🌙';
+      });
+      
+      localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+    }
+
+    function loadDarkModePreference() {
+      const darkModePreference = localStorage.getItem('darkMode');
+      if (darkModePreference === 'enabled') {
+        isDarkMode = true;
+        document.body.classList.add('dark-mode');
+        const allToggles = document.querySelectorAll('.dark-mode-toggle');
+        allToggles.forEach(toggle => {
+          toggle.textContent = '☀️';
+        });
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadDarkModePreference);
 
     function shuffleArray(array) {
       const shuffled = [...array];
@@ -925,7 +1073,7 @@
         message = 'جيد! لديك أساس معرفي جيد 👍';
         icon = '✅';
       } else {
-        message = 'يمكن�� التحسين! حاول مرة أخرى 💪';
+        message = 'يمكن�� ال��حسين! حاول مرة أخرى 💪';
         icon = '📚';
       }
       
@@ -998,5 +1146,5 @@
       });
     }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a3258c52696d0f4',t:'MTc2MzkxODUyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a32c896f2e4e327',t:'MTc2MzkyMzEwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
