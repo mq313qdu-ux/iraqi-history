@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة الاختبار التفاعلية</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100%;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 800px;
+      padding: 2rem 1rem;
+    }
+    
+    .welcome-screen {
+      background: rgba(255, 255, 255, 0.98);
+      padding: 3rem 2rem;
+      border-radius: 25px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .welcome-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .welcome-title {
+      color: #2d3748;
+      font-size: 2.5rem;
+      margin: 0 0 1rem 0;
+      font-weight: 800;
+    }
+    
+    .welcome-subtitle {
+      color: #4a5568;
+      font-size: 1.2rem;
+      margin: 0 0 2rem 0;
+      line-height: 1.6;
+    }
+    
+    .quiz-info {
+      background: #f7fafc;
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      border-right: 5px solid #667eea;
+    }
+    
+    .quiz-info-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: #2d3748;
+      font-size: 1.1rem;
+      margin: 0.5rem 0;
+      font-weight: 600;
+    }
+    
+    .start-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 1.2rem 3rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+    
+    .start-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+    }
+    
+    .quiz-screen {
+      display: none;
+      background: rgba(255, 255, 255, 0.98);
+      padding: 2rem;
+      border-radius: 25px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 3px solid #e2e8f0;
+    }
+    
+    .progress-info {
+      font-size: 1.1rem;
+      color: #4a5568;
+      font-weight: 600;
+    }
+    
+    .score-badge {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      color: white;
+      padding: 0.6rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+    }
+    
+    .progress-bar-container {
+      background: #e2e8f0;
+      height: 12px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    
+    .progress-bar {
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      height: 100%;
+      transition: width 0.5s ease;
+      border-radius: 10px;
+    }
+    
+    .question-card {
+      margin-bottom: 2rem;
+    }
+    
+    .question-number {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0.5rem 1.2rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .question-text {
+      color: #2d3748;
+      font-size: 1.4rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      font-weight: 600;
+    }
+    
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .option-btn {
+      background: #f7fafc;
+      border: 3px solid #e2e8f0;
+      padding: 1.2rem 1.5rem;
+      border-radius: 15px;
+      text-align: right;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+      color: #2d3748;
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .option-btn:hover {
+      border-color: #667eea;
+      background: #edf2f7;
+      transform: translateX(-5px);
+    }
+    
+    .option-btn.selected {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: #667eea;
+      color: white;
+      transform: scale(1.02);
+    }
+    
+    .option-btn.correct {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      border-color: #48bb78;
+      color: white;
+      animation: correctAnswer 0.6s ease;
+    }
+    
+    .option-btn.wrong {
+      background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+      border-color: #f56565;
+      color: white;
+      animation: wrongAnswer 0.6s ease;
+    }
+    
+    @keyframes correctAnswer {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    @keyframes wrongAnswer {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    
+    .option-btn.disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    
+    .option-label {
+      display: inline-block;
+      width: 35px;
+      height: 35px;
+      background: #cbd5e0;
+      color: #2d3748;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 35px;
+      margin-left: 1rem;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    
+    .option-btn.selected .option-label,
+    .option-btn.correct .option-label,
+    .option-btn.wrong .option-label {
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+    }
+    
+    .next-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 1rem 2.5rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 2rem;
+      width: 100%;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      display: none;
+    }
+
+    .next-btn.show {
+      display: block;
+    }
+    
+    .next-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+    }
+    
+    .next-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .results-screen {
+      display: none;
+      background: rgba(255, 255, 255, 0.98);
+      padding: 3rem 2rem;
+      border-radius: 25px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .results-icon {
+      font-size: 5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .results-title {
+      color: #2d3748;
+      font-size: 2.5rem;
+      margin: 0 0 1rem 0;
+      font-weight: 800;
+    }
+    
+    .final-score {
+      font-size: 4rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 1rem 0;
+    }
+    
+    .results-message {
+      color: #4a5568;
+      font-size: 1.3rem;
+      margin: 1.5rem 0;
+      line-height: 1.6;
+    }
+    
+    .results-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    
+    .stat-card {
+      background: #f7fafc;
+      padding: 1.5rem;
+      border-radius: 15px;
+      border-top: 4px solid #667eea;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      color: #4a5568;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    
+    .restart-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 1.2rem 3rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    }
+    
+    .restart-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+    }
+
+    @media (max-width: 768px) {
+      .welcome-title {
+        font-size: 1.8rem;
+      }
+      
+      .welcome-subtitle {
+        font-size: 1rem;
+      }
+      
+      .question-text {
+        font-size: 1.1rem;
+      }
+      
+      .option-btn {
+        font-size: 1rem;
+        padding: 1rem;
+      }
+      
+      .results-stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .final-score {
+        font-size: 3rem;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="container">
+   <main>
+    <div class="welcome-screen" id="welcome-screen">
+     <div class="welcome-icon">
+      📚
+     </div>
+     <h1 class="welcome-title" id="main-title">اختبار تاريخ العراق التفاعلي</h1>
+     <p class="welcome-subtitle" id="subtitle">اختبر معلوماتك حول فترة حكم حزب البعث من خلال 50 سؤالاً متنوعاً</p>
+     <div class="quiz-info">
+      <div class="quiz-info-item"><span>📝</span> <span>30 سؤال اختيار متعدد</span>
+      </div>
+      <div class="quiz-info-item"><span>✅</span> <span>20 سؤال صح وخطأ</span>
+      </div>
+      <div class="quiz-info-item"><span>⏱️</span> <span>بدون حد زمني</span>
+      </div>
+      <div class="quiz-info-item" style="margin-top: 1rem; padding-top: 1rem; border-top: 2px solid #e2e8f0;"><span>👨‍🎓</span> <span>إعداد الطالب: مقتدى الكناني</span>
+      </div>
+     </div><button class="start-btn" id="start-btn" onclick="startQuiz()">ابدأ الاختبار الآن</button>
+    </div>
+    <div class="quiz-screen" id="quiz-screen">
+     <div class="quiz-header">
+      <div class="progress-info"><span>السؤال </span> <span id="current-question">1</span> <span> من </span> <span id="total-questions">50</span>
+      </div>
+      <div class="score-badge"><span>النقاط: </span> <span id="current-score">0</span>
+      </div>
+     </div>
+     <div class="progress-bar-container">
+      <div class="progress-bar" id="progress-bar"></div>
+     </div>
+     <div class="question-card">
+      <div class="question-number" id="question-number">
+       السؤال 1
+      </div>
+      <div class="question-text" id="question-text"></div>
+      <div class="options-container" id="options-container"></div>
+     </div><button class="next-btn" id="next-btn" onclick="nextQuestion()"> السؤال التالي ← </button>
+    </div>
+    <div class="results-screen" id="results-screen">
+     <div class="results-icon" id="results-icon">
+      🎊
+     </div>
+     <h2 class="results-title">انتهى الاختبار!</h2>
+     <div class="final-score" id="final-score">
+      0/50
+     </div>
+     <p class="results-message" id="results-message"></p>
+     <div class="results-stats">
+      <div class="stat-card">
+       <div class="stat-value" id="correct-answers">
+        0
+       </div>
+       <div class="stat-label">
+        إجابات صحيحة
+       </div>
+      </div>
+      <div class="stat-card">
+       <div class="stat-value" id="wrong-answers">
+        0
+       </div>
+       <div class="stat-label">
+        إجابات خاطئة
+       </div>
+      </div>
+      <div class="stat-card">
+       <div class="stat-value" id="percentage">
+        0%
+       </div>
+       <div class="stat-label">
+        نسبة النجاح
+       </div>
+      </div>
+     </div><button class="restart-btn" onclick="restartQuiz()">إعادة الاختبار 🔄</button>
+    </div>
+   </main>
+  </div>
+  <script>
+    const defaultConfig = {
+      main_title: "اختبار تاريخ العراق التفاعلي",
+      subtitle: "اختبر معلوماتك حول فترة ��كم حزب البعث من خلال 50 سؤالاً متنوعاً",
+      start_button: "ابدأ الاختبار الآن",
+      primary_color: "#667eea",
+      secondary_color: "#ffffff",
+      text_color: "#2d3748",
+      success_color: "#48bb78",
+      error_color: "#f56565",
+      font_family: "Cairo",
+      font_size: 16
+    };
+
+    const quizData = [
+      {
+        type: "mcq",
+        q: "في أي سنة حدث انقلاب تموز الذي سيطر به حزب البعث على الحكم؟",
+        correct: "1968",
+        options: ["1963", "1979", "1968", "1958"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي ذكر كمظهر من مظاهر انتهاكات النظام؟",
+        correct: "الاعتقالات والتعذيب والإعدام",
+        options: ["دعم الاستثمارات الأجنبية", "الاعتقالات والتعذيب والإعدام", "توفير التعليم المجاني", "تنظيم انتخابات حرة ونزيهة"]
+      },
+      {
+        type: "mcq",
+        q: "أي جهة كانت تمنح تصريحا للمطبوعات؟",
+        correct: "وزير الثقافة والإعلام",
+        options: ["نقابة الصحفيين العراقيين", "المحكمة الجنائية العليا", "دائرة الرقابة العامة", "وزير الثقافة والإعلام"]
+      },
+      {
+        type: "mcq",
+        q: "أي قرار فرض عقوبة الإعدام على المنتسبين لأحزاب معينة؟",
+        correct: "قرار 461",
+        options: ["قرار 187", "قرار 461", "قرار 12", "قرار 522"]
+      },
+      {
+        type: "mcq",
+        q: "ماذا عانت الفئات الثقافية والعلمية في عهد النظام؟",
+        correct: "تصفية وهجرة قسرية",
+        options: ["تكريم ودعم غير محدود", "تصفية وهجرة قسرية", "إشراكهم في الحكم والقرارات", "منحهم حصانات دبلوماسية"]
+      },
+      {
+        type: "mcq",
+        q: "أي حدث ارتبط بتاريخ 14 تموز؟",
+        correct: "انقلاب 1958 وإسقاط الملكية",
+        options: ["حرب القادسية", "انقلاب 1958 وإسقاط الملكية", "غزو الكويت", "الحرب العراقية الايرانية"]
+      },
+      {
+        type: "mcq",
+        q: "ماذا تضمن دستور 1970؟",
+        correct: "نصوص حقوق لكنها مقيدة",
+        options: ["إلغاء جميع الحقوق المدنية والسياسية", "ضمانات دولية غير قابلة للنقض", "نصوص حقوق لكنها مقيدة", "فتح باب التعددية السياسية"]
+      },
+      {
+        type: "mcq",
+        q: "أي ممارسة إعلامية كانت ممنوعة؟",
+        correct: "التقاط الفضائيات",
+        options: ["إصدار المجلات الرسمية", "بث الإذاعة المحلية", "التقاط الفضائيات", "قراءة الصحف الحكومية"]
+      },
+      {
+        type: "mcq",
+        q: "أي مجموعات تعرضت لإسقاط الجنسية؟",
+        correct: "الأقليات والمعارضون",
+        options: ["أعضاء الحزب الحاكم", "العسكريون المتقاعدون", "الأقليات والمعارضون", "الطلاب المبتعثون للدراسة"]
+      },
+      {
+        type: "mcq",
+        q: "أي من الجرائم التالية ارتكبها البعث ضد المثقفين؟",
+        correct: "الإعدامات والاعتقالات التعسفية",
+        options: ["توفير منح دراسية خارجية", "الإعدامات والاعتقالات التعسفية", "التضييق على الحريات المالية", "إجبارهم على الإقامة في بغداد"]
+      },
+      {
+        type: "mcq",
+        q: "ما اسم الحملة التي استهدفت عشائر الشيعة في جنوب العراق؟",
+        correct: "حملة القمع الطائفية",
+        options: ["حملة تحرير الفاو", "حملة الأنفال", "حملة القمع الطائفية", "حملة السيطرة على الأهوار"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يعتبر وسيلة البعث للسيطرة على الجيش؟",
+        correct: "تعيين الضباط الموالين للنظام",
+        options: ["إلغاء الخدمة الإلزامية", "تعيين الضباط الموالين للنظام", "إلغاء الرتب", "تقليل ساعات التدريب العسكري"]
+      },
+      {
+        type: "mcq",
+        q: "أي من الجرائم كان مرتبطا بمحاولة البعث تغيير التركيبة السكانية؟",
+        correct: "التهجير القسري",
+        options: ["فتح الحدود", "التجنيس الجماعي", "التهجير القسري", "بناء المساكن العشوائية"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يمثل جريمة ثقافية ارتكبها البعث؟",
+        correct: "تدمير التراث الثقافي للمعارضين",
+        options: ["دعم الفنون الحديثة", "تدمير التراث الثقافي للمعارضين", "إنشاء متاحف جديدة", "طباعة كتب للأدب العالمي"]
+      },
+      {
+        type: "mcq",
+        q: "أي من الأدوات التالية استخدمها البعث لإسكات المعارضة؟",
+        correct: "الرقابة الإعلامية",
+        options: ["الحوارات المفتوحة معهم", "الرقابة الإعلامية", "صناديق الاقتراع", "فتح الصحف المستقلة"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يعكس القمع السياسي لنظام البعث؟",
+        correct: "منع الأحزاب المعارضة",
+        options: ["استقلال السلطة القضائية", "منع الأحزاب المعارضة", "فتح باب الاحزاب", "توسيع صلاحيات البرلمان"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يعكس الهدف من الاعتقالات الجماعية؟",
+        correct: "ترهيب الشعب والسيطرة عليه",
+        options: ["حماية أمن الدولة", "ترهيب الشعب والسيطرة عليه", "إعادة تأهيل المعتقلين", "إحصاء عدد السكان"]
+      },
+      {
+        type: "mcq",
+        q: "أي من الجرائم التالية ارتكبها البعث في محافظة الأنبار؟",
+        correct: "الاعتقالات والإعدامات التعسفية",
+        options: ["دعم مشاريع المياه الإقليمية", "الاعتقالات والإعدامات التعسفية", "دعم شيوخ العشائر", "توزيع الأراضي الزراعية"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يمثل استخدام البعث للعنف ضد المدنيين؟",
+        correct: "التفجيرات والإعدامات",
+        options: ["منع تأسيس دور لرعاية الأيتام", "التفجيرات والإعدامات", "منع تنظيم معارض فنية", "بناء الملاجئ"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يمثل جزءا من سياسة الإبادة العرقية؟",
+        correct: "قتل وتهجير السكان الأكراد",
+        options: ["توظيف الأيدي العاملة الأجنبية", "قتل وتهجير السكان الأكراد", "تمثيل الأقليات في الحكومة", "دعم المشاريع البيئية"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يعكس سياسة البعث تجاه المعارضين السياسيين؟",
+        correct: "الاعتقالات والتعذيب",
+        options: ["منحهم مناصب قيادية", "الاعتقالات والتعذيب", "تشجيعهم على تأسيس أحزاب", "تجاهلهم وعدم الاكتراث بهم"]
+      },
+      {
+        type: "mcq",
+        q: "أي من الجرائم التالية ارتكبها البعث ضد سكان الجنوب؟",
+        correct: "القمع الطائفي",
+        options: ["تدمير البنية التحتية التعليمية", "القمع الطائفي", "منعهم من السفر للخارج", "إيقاف الدعم الحكومي للمحاصيل"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يمثل سببا رئيسيا لانتشار الخوف في المجتمع؟",
+        correct: "الاعتقالات والإعدامات التعسفية",
+        options: ["البطالة بين الشباب", "الاعتقالات والإعدامات التعسفية", "النمو الاقتصادي السريع", "انقطاع التيار الكهربائي"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يمثل هدف البعث من الحملات العسكرية ضد الكرد؟",
+        correct: "القضاء على التمرد والسيطرة على الأراضي",
+        options: ["دعم الزراعة في الشمال", "القضاء على التمرد والسيطرة على الأراضي", "دعم الحكم الذاتي للأكراد", "بناء علاقات دبلوماسية"]
+      },
+      {
+        type: "mcq",
+        q: "أي من الجرائم ارتكبها البعث بحق الأسر المعارضة؟",
+        correct: "مصادرة الممتلكات والمنازل",
+        options: ["توفير سكن مجاني لهم", "مصادرة الممتلكات والمنازل", "تقديم تعويضات مالية", "منحهم امتيازات خاصة"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يمثل الأسلوب الذي استخدمه البعث لإضعاف الأحزاب المعارضة؟",
+        correct: "إلغاء الأحزاب وملاحقة أعضائها",
+        options: ["فتح باب الحوار معها", "إلغاء الأحزاب وملاحقة أعضائها", "تمويل نشاطاتها السياسية لضمان ولائها", "دمجها في الحزب الحاكم طوعيا"]
+      },
+      {
+        type: "mcq",
+        q: "أي من الجرائم التالية ارتكبها البعث بحق سكان كردستان؟",
+        correct: "التهجير القسري",
+        options: ["بناء المستشفيات الحديثة", "التهجير القسري", "دعم التجارة الحدودية", "منح الحكم الذاتي"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يعكس هدف البعث من إنشاء الأجهزة السرية؟",
+        correct: "مراقبة المعارضين والسيطرة على المجتمع",
+        options: ["تنظيم الأنشطة الشبابية", "مراقبة المعارضين والسيطرة على المجتمع", "حماية الحدود الدولية", "مكافحة الفساد الإداري"]
+      },
+      {
+        type: "mcq",
+        q: "أي من التالي يمثل أحد مظاهر التعذيب السياسي في عهد البعث؟",
+        correct: "الاعتقالات التعسفية",
+        options: ["الرعاية الصحية الفائقة", "الاعتقالات التعسفية", "محاكمات عادلة وعلنية", "الإفراج السريع عن الموقوفين"]
+      },
+      {
+        type: "mcq",
+        q: "أي من الجرائم ارتكبها البعث ضد النساء؟",
+        correct: "التهجير والاعتقال",
+        options: ["توفير ضمان اجتماعي كامل", "التهجير والاعتقال", "منحهن حق الترشح لرئاسة الدولة", "دعم تعليم الفتيات"]
+      },
+      {
+        type: "tf",
+        q: "سيطرة حزب البعث على العراق بدأت عام 1968.",
+        correct: "صح"
+      },
+      {
+        type: "tf",
+        q: "أحمد حسن البكر أصبح رئيس العراق بعد استيلاء البعث على السلطة.",
+        correct: "صح"
+      },
+      {
+        type: "tf",
+        q: "حملة الأنفال استهدفت المدن العراقية فقط.",
+        correct: "خطأ"
+      },
+      {
+        type: "tf",
+        q: "الإبادة الجماعية كانت أحد أهداف حملة الأنفال.",
+        correct: "صح"
+      },
+      {
+        type: "tf",
+        q: "نظام البعث قام بتهجير الأكراد قسريا.",
+        correct: "صح"
+      },
+      {
+        type: "tf",
+        q: "المعارضين السياسيين لم يتعرضوا للاعتقال أو التعذيب في عهد البعث.",
+        correct: "خطأ"
+      },
+      {
+        type: "tf",
+        q: "الرقابة الإعلامية كانت وسيلة للبعث للسيطرة على الرأي العام.",
+        correct: "صح"
+      },
+      {
+        type: "tf",
+        q: "البعث كان يشجع حرية الصحافة والنقاش السياسي.",
+        correct: "خطأ"
+      },
+      {
+        type: "tf",
+        q: "الاعتقالات التعسفية والإعدامات كانت من أدوات الترهيب لدى البعث.",
+        correct: "صح"
+      },
+      {
+        type: "tf",
+        q: "البعث وفر حماية كاملة للأقليات الدينية والعرقية.",
+        correct: "خطأ"
+      },
+      {
+        type: "tf",
+        q: "الأطفال في مناطق النزاع تعرضوا للتجنيد الإجباري.",
+        correct: "صح"
+      },
+      {
+        type: "tf",
+        q: "المثقفون لم يتعرضوا لأي اضطهاد من قبل نظام البعث.",
+        correct: "خطأ"
+      },
+      {
+        type: "tf",
+        q: "الاعتقالات والإعدامات كانت مقتصرة على المدن الكبرى فقط.",
+        correct: "خطأ"
+      },
+      {
+        type: "tf",
+        q: "البعث قام بمصادرة ممتلكات الأسر المعارضة.",
+        correct: "صح"
+      },
+      {
+        type: "tf",
+        q: "النظام كان يدعم التعليم والثقافة الحرة.",
+        correct: "خطأ"
+      },
+      {
+        type: "tf",
+        q: "التمييز الطائفي استهدف خصوصا سكان الجنوب.",
+        correct: "صح"
+      },
+      {
+        type: "tf",
+        q: "البعث استخدم الأجهزة السرية لمراقبة المعارضين فقط.",
+        correct: "صح"
+      },
+      {
+        type: "tf",
+        q: "التعذيب والإعدامات لم تستخدم للسيطرة على المجتمع.",
+        correct: "خطأ"
+      },
+      {
+        type: "tf",
+        q: "النساء تعرضن للاعتقال والتهجير في فترة حكم البعث.",
+        correct: "صح"
+      },
+      {
+        type: "tf",
+        q: "البعث كان يحترم حقوق الإنسان الأساسية.",
+        correct: "خطأ"
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let selectedAnswer = null;
+    let answered = false;
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function startQuiz() {
+      document.getElementById('welcome-screen').style.display = 'none';
+      document.getElementById('quiz-screen').style.display = 'block';
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      if (currentQuestionIndex >= quizData.length) {
+        showResults();
+        return;
+      }
+
+      answered = false;
+      selectedAnswer = null;
+      
+      const question = quizData[currentQuestionIndex];
+      document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+      document.getElementById('total-questions').textContent = quizData.length;
+      document.getElementById('question-number').textContent = `السؤال ${currentQuestionIndex + 1}`;
+      document.getElementById('question-text').textContent = question.q;
+      
+      const progress = ((currentQuestionIndex) / quizData.length) * 100;
+      document.getElementById('progress-bar').style.width = progress + '%';
+      
+      const nextBtn = document.getElementById('next-btn');
+      nextBtn.classList.remove('show');
+      
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+      
+      if (question.type === 'mcq') {
+        const shuffledOptions = shuffleArray(question.options);
+        const labels = ['أ', 'ب', 'ج', 'د'];
+        
+        shuffledOptions.forEach((option, index) => {
+          const button = document.createElement('button');
+          button.className = 'option-btn';
+          button.innerHTML = `
+            <span class="option-label">${labels[index]}</span>
+            ${option}
+          `;
+          button.onclick = () => selectAnswer(option, button);
+          optionsContainer.appendChild(button);
+        });
+      } else if (question.type === 'tf') {
+        const tfOptions = ['صح', 'خطأ'];
+        tfOptions.forEach((option) => {
+          const button = document.createElement('button');
+          button.className = 'option-btn';
+          button.innerHTML = `
+            <span class="option-label">${option === 'صح' ? '✓' : '✗'}</span>
+            ${option}
+          `;
+          button.onclick = () => selectAnswer(option, button);
+          optionsContainer.appendChild(button);
+        });
+      }
+    }
+
+    function selectAnswer(answer, button) {
+      if (answered) return;
+      
+      answered = true;
+      selectedAnswer = answer;
+      const question = quizData[currentQuestionIndex];
+      const allButtons = document.querySelectorAll('.option-btn');
+      
+      allButtons.forEach(btn => {
+        btn.classList.add('disabled');
+        const btnText = btn.textContent.trim().replace(/^[أبجد✓✗]\s*/, '').trim();
+        
+        if (btnText === question.correct) {
+          btn.classList.add('correct');
+        }
+      });
+      
+      const isCorrect = answer === question.correct;
+      
+      if (isCorrect) {
+        score++;
+        button.classList.add('correct');
+        document.getElementById('current-score').textContent = score;
+        
+        setTimeout(() => {
+          currentQuestionIndex++;
+          loadQuestion();
+        }, 1000);
+      } else {
+        button.classList.add('wrong');
+        const nextBtn = document.getElementById('next-btn');
+        nextBtn.classList.add('show');
+      }
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      loadQuestion();
+    }
+
+    function showResults() {
+      document.getElementById('quiz-screen').style.display = 'none';
+      document.getElementById('results-screen').style.display = 'block';
+      
+      const percentage = Math.round((score / quizData.length) * 100);
+      const wrongAnswers = quizData.length - score;
+      
+      document.getElementById('final-score').textContent = `${score}/${quizData.length}`;
+      document.getElementById('correct-answers').textContent = score;
+      document.getElementById('wrong-answers').textContent = wrongAnswers;
+      document.getElementById('percentage').textContent = percentage + '%';
+      
+      let message = '';
+      let icon = '';
+      
+      if (percentage >= 90) {
+        message = 'ممتاز! لديك معرفة عميقة بالموضوع 🌟';
+        icon = '🏆';
+      } else if (percentage >= 70) {
+        message = 'جيد جداً! أداء رائع ومعلومات قوية 👏';
+        icon = '🎉';
+      } else if (percentage >= 50) {
+        message = 'جيد! لديك أساس معرفي جيد 👍';
+        icon = '✅';
+      } else {
+        message = 'يمكنك التحسين! حاول مرة أخرى 💪';
+        icon = '📚';
+      }
+      
+      document.getElementById('results-message').textContent = message;
+      document.getElementById('results-icon').textContent = icon;
+    }
+
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      selectedAnswer = null;
+      answered = false;
+      
+      document.getElementById('results-screen').style.display = 'none';
+      document.getElementById('welcome-screen').style.display = 'block';
+      document.getElementById('current-score').textContent = '0';
+    }
+
+    async function onConfigChange(config) {
+      const mainTitle = config.main_title || defaultConfig.main_title;
+      const subtitle = config.subtitle || defaultConfig.subtitle;
+      const startButton = config.start_button || defaultConfig.start_button;
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      
+      document.getElementById('main-title').textContent = mainTitle;
+      document.getElementById('subtitle').textContent = subtitle;
+      document.getElementById('start-btn').textContent = startButton;
+      
+      const baseFontStack = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+      document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      
+      document.querySelector('.welcome-title').style.fontSize = `${baseSize * 2.5}px`;
+      document.querySelector('.welcome-subtitle').style.fontSize = `${baseSize * 1.2}px`;
+      document.querySelectorAll('.question-text').forEach(el => {
+        el.style.fontSize = `${baseSize * 1.4}px`;
+      });
+      document.querySelectorAll('.option-btn').forEach(el => {
+        el.style.fontSize = `${baseSize * 1.1}px`;
+      });
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["main_title", config.main_title || defaultConfig.main_title],
+          ["subtitle", config.subtitle || defaultConfig.subtitle],
+          ["start_button", config.start_button || defaultConfig.start_button]
+        ])
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a3229a9f5ead60f',t:'MTc2MzkxNjU5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
