@@ -8,218 +8,93 @@
    <style>
      * {
        box-sizing: border-box;
+       margin: 0;
+       padding: 0;
+     }
+
+     :root {
+       --primary: #667eea;
+       --secondary: #764ba2;
+       --accent: #f093fb;
+       --success: #48bb78;
+       --error: #f56565;
+       --warning: #ed8936;
+       --dark-bg: #0f172a;
+       --dark-card: #1e293b;
+       --light-bg: #f8fafc;
+       --text-light: #e2e8f0;
+       --text-dark: #1e293b;
      }
 
      body {
-       margin: 0;
-       padding: 0;
-       font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+       font-family: 'Cairo', 'Segoe UI', sans-serif;
+       background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
        min-height: 100vh;
        display: flex;
        align-items: center;
        justify-content: center;
+       overflow-x: hidden;
+       position: relative;
      }
 
-     html {
-       height: 100%;
+     body::before {
+       content: '';
+       position: fixed;
+       width: 400px;
+       height: 400px;
+       background: radial-gradient(circle, rgba(240, 147, 251, 0.2) 0%, transparent 70%);
+       border-radius: 50%;
+       top: -100px;
+       right: -100px;
+       z-index: 0;
+       pointer-events: none;
+     }
+
+     body::after {
+       content: '';
+       position: fixed;
+       width: 300px;
+       height: 300px;
+       background: radial-gradient(circle, rgba(102, 126, 234, 0.15) 0%, transparent 70%);
+       border-radius: 50%;
+       bottom: -50px;
+       left: -50px;
+       z-index: 0;
+       pointer-events: none;
      }
 
      .container {
        width: 100%;
-       max-width: 900px;
+       max-width: 1000px;
        padding: 2rem 1rem;
+       position: relative;
+       z-index: 1;
      }
 
+     main {
+       perspective: 1000px;
+     }
+
+     /* الشاشات الأساسية */
+     .login-screen,
      .welcome-screen,
      .quiz-screen,
-     .results-screen,
-     .login-screen {
-       background: rgba(255, 255, 255, 0.98);
-       padding: 3rem 2rem;
-       border-radius: 25px;
-       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-       animation: fadeIn 0.5s ease;
+     .results-screen {
+       display: none;
+       animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
      }
 
-     .login-screen {
-       display: flex;
-       flex-direction: column;
-       gap: 1.5rem;
+     .login-screen.show,
+     .welcome-screen.show,
+     .quiz-screen.show,
+     .results-screen.show {
+       display: block;
      }
 
-     .login-input {
-       width: 100%;
-       padding: 1rem;
-       font-size: 1.1rem;
-       border: 2px solid #e2e8f0;
-       border-radius: 10px;
-       font-family: 'Cairo', sans-serif;
-       direction: rtl;
-       transition: border-color 0.3s;
-     }
-
-     .login-input:focus {
-       outline: none;
-       border-color: #667eea;
-     }
-
-     .login-button {
-       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-       color: white;
-       border: none;
-       padding: 1rem 2rem;
-       font-size: 1.1rem;
-       font-weight: 700;
-       border-radius: 50px;
-       cursor: pointer;
-       transition: all 0.3s ease;
-       box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-     }
-
-     .login-button:hover {
-       transform: translateY(-3px);
-       box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-     }
-
-     .dark-mode-toggle {
-       position: fixed;
-       top: 1.5rem;
-       left: 1.5rem;
-       background: #f7fafc;
-       border: 2px solid #e2e8f0;
-       width: 50px;
-       height: 50px;
-       border-radius: 50%;
-       cursor: pointer;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       font-size: 1.5rem;
-       transition: all 0.3s ease;
-       z-index: 10;
-     }
-
-     .dark-mode-toggle:hover {
-       transform: scale(1.1);
-       border-color: #667eea;
-     }
-
-     .sound-toggle {
-       position: fixed;
-       top: 1.5rem;
-       left: 6rem;
-       background: #f7fafc;
-       border: 2px solid #e2e8f0;
-       width: 50px;
-       height: 50px;
-       border-radius: 50%;
-       cursor: pointer;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       font-size: 1.5rem;
-       transition: all 0.3s ease;
-       z-index: 10;
-     }
-
-     .sound-toggle:hover {
-       transform: scale(1.1);
-       border-color: #667eea;
-     }
-
-     body.dark-mode {
-       background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-     }
-
-     body.dark-mode .welcome-screen,
-     body.dark-mode .quiz-screen,
-     body.dark-mode .results-screen,
-     body.dark-mode .login-screen {
-       background: rgba(45, 55, 72, 0.95);
-       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-     }
-
-     body.dark-mode .welcome-title,
-     body.dark-mode .results-title,
-     body.dark-mode .question-text,
-     body.dark-mode .login-title {
-       color: #e2e8f0;
-     }
-
-     body.dark-mode .welcome-subtitle,
-     body.dark-mode .results-message,
-     body.dark-mode .progress-info,
-     body.dark-mode .stat-label,
-     body.dark-mode .login-subtitle {
-       color: #cbd5e0;
-     }
-
-     body.dark-mode .quiz-info {
-       background: #2d3748;
-       border-right-color: #667eea;
-     }
-
-     body.dark-mode .quiz-info-item {
-       color: #e2e8f0;
-     }
-
-     body.dark-mode .option-btn {
-       background: #2d3748;
-       border-color: #4a5568;
-       color: #e2e8f0;
-     }
-
-     body.dark-mode .option-btn:hover {
-       background: #374151;
-       border-color: #667eea;
-     }
-
-     body.dark-mode .stat-card {
-       background: #2d3748;
-       border-top-color: #667eea;
-     }
-
-     body.dark-mode .stat-value {
-       color: #e2e8f0;
-     }
-
-     body.dark-mode .quiz-header {
-       border-bottom-color: #4a5568;
-     }
-
-     body.dark-mode .student-badge {
-       background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-     }
-
-     body.dark-mode .progress-bar-container {
-       background: #4a5568;
-     }
-
-     body.dark-mode .dark-mode-toggle,
-     body.dark-mode .sound-toggle {
-       background: #4a5568;
-       border-color: #667eea;
-     }
-
-     body.dark-mode .timer {
-       color: #e2e8f0;
-     }
-
-     body.dark-mode .timer.warning {
-       color: #fc8181;
-     }
-
-     body.dark-mode .login-input {
-       background: #2d3748;
-       border-color: #4a5568;
-       color: #e2e8f0;
-     }
-
-     @keyframes fadeIn {
+     @keyframes slideInUp {
        from {
          opacity: 0;
-         transform: translateY(20px);
+         transform: translateY(40px);
        }
        to {
          opacity: 1;
@@ -227,222 +102,507 @@
        }
      }
 
+     @keyframes fadeIn {
+       from {
+         opacity: 0;
+       }
+       to {
+         opacity: 1;
+       }
+     }
+
+     @keyframes glow {
+       0%, 100% {
+         box-shadow: 0 0 20px rgba(240, 147, 251, 0.3);
+       }
+       50% {
+         box-shadow: 0 0 40px rgba(240, 147, 251, 0.6);
+       }
+     }
+
      @keyframes pulse {
-       0%, 100% { transform: scale(1); }
-       50% { transform: scale(1.05); }
+       0%, 100% {
+         transform: scale(1);
+       }
+       50% {
+         transform: scale(1.05);
+       }
+     }
+
+     @keyframes shimmer {
+       0% {
+         background-position: -1000px 0;
+       }
+       100% {
+         background-position: 1000px 0;
+       }
+     }
+
+     @keyframes float {
+       0%, 100% {
+         transform: translateY(0px);
+       }
+       50% {
+         transform: translateY(-20px);
+       }
+     }
+
+     /* شاشة تسجيل الدخول */
+     .login-screen {
+       background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.95) 100%);
+       backdrop-filter: blur(10px);
+       border: 1px solid rgba(240, 147, 251, 0.2);
+       border-radius: 30px;
+       padding: 4rem 2.5rem;
+       max-width: 500px;
+       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+       position: relative;
+       overflow: hidden;
+     }
+
+     .login-screen::before {
+       content: '';
+       position: absolute;
+       top: 0;
+       left: 0;
+       right: 0;
+       height: 2px;
+       background: linear-gradient(90deg, transparent, rgba(240, 147, 251, 0.5), transparent);
+       animation: shimmer 3s infinite;
+     }
+
+     .login-title {
+       color: var(--accent);
+       font-size: 2.5rem;
+       font-weight: 900;
+       margin-bottom: 0.5rem;
+       text-align: center;
+       background: linear-gradient(135deg, #f093fb 0%, #667eea 100%);
+       -webkit-background-clip: text;
+       -webkit-text-fill-color: transparent;
+       background-clip: text;
+     }
+
+     .login-subtitle {
+       color: var(--text-light);
+       text-align: center;
+       font-size: 1rem;
+       margin-bottom: 2rem;
+       opacity: 0.8;
+     }
+
+     .login-form-group {
+       margin-bottom: 1.5rem;
+       position: relative;
+     }
+
+     .login-form-group label {
+       display: block;
+       color: var(--text-light);
+       font-size: 0.9rem;
+       font-weight: 600;
+       margin-bottom: 0.5rem;
+       margin-right: 0.5rem;
+     }
+
+     .login-input {
+       width: 100%;
+       padding: 1rem;
+       font-size: 1rem;
+       border: 2px solid rgba(240, 147, 251, 0.2);
+       background: rgba(255, 255, 255, 0.05);
+       border-radius: 15px;
+       color: var(--text-light);
+       font-family: 'Cairo', sans-serif;
+       direction: rtl;
+       transition: all 0.3s ease;
+       backdrop-filter: blur(10px);
+     }
+
+     .login-input::placeholder {
+       color: rgba(226, 232, 240, 0.5);
+     }
+
+     .login-input:focus {
+       outline: none;
+       border-color: var(--accent);
+       background: rgba(255, 255, 255, 0.1);
+       box-shadow: 0 0 20px rgba(240, 147, 251, 0.2);
+     }
+
+     .login-button {
+       width: 100%;
+       padding: 1.2rem;
+       font-size: 1.1rem;
+       font-weight: 700;
+       border: none;
+       border-radius: 15px;
+       background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+       color: white;
+       cursor: pointer;
+       transition: all 0.3s ease;
+       margin-top: 1rem;
+       position: relative;
+       overflow: hidden;
+       box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+     }
+
+     .login-button::before {
+       content: '';
+       position: absolute;
+       top: 0;
+       left: -100%;
+       width: 100%;
+       height: 100%;
+       background: rgba(255, 255, 255, 0.2);
+       transition: left 0.5s;
+     }
+
+     .login-button:hover::before {
+       left: 100%;
+     }
+
+     .login-button:hover {
+       transform: translateY(-3px);
+       box-shadow: 0 15px 40px rgba(240, 147, 251, 0.6);
+     }
+
+     .login-button:active {
+       transform: translateY(-1px);
+     }
+
+     /* شاشة الترحيب */
+     .welcome-screen {
+       background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.98) 100%);
+       backdrop-filter: blur(20px);
+       border: 1px solid rgba(240, 147, 251, 0.2);
+       border-radius: 40px;
+       padding: 4rem 3rem;
+       max-width: 700px;
+       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+       position: relative;
+       overflow: hidden;
+     }
+
+     .welcome-screen::before {
+       content: '';
+       position: absolute;
+       top: -50%;
+       right: -50%;
+       width: 500px;
+       height: 500px;
+       background: radial-gradient(circle, rgba(240, 147, 251, 0.1) 0%, transparent 70%);
+       border-radius: 50%;
      }
 
      .welcome-icon {
-       font-size: 4rem;
+       font-size: 5rem;
+       text-align: center;
        margin-bottom: 1.5rem;
+       animation: float 3s ease-in-out infinite;
      }
 
-     .welcome-title,
-     .login-title {
-       color: #2d3748;
-       font-size: 2.5rem;
-       margin: 0 0 1rem 0;
-       font-weight: 800;
+     .welcome-title {
+       color: var(--accent);
+       font-size: 2.8rem;
+       font-weight: 900;
+       text-align: center;
+       margin-bottom: 1rem;
+       background: linear-gradient(135deg, #f093fb 0%, #667eea 100%);
+       -webkit-background-clip: text;
+       -webkit-text-fill-color: transparent;
+       background-clip: text;
      }
 
-     .welcome-subtitle,
-     .login-subtitle {
-       color: #4a5568;
-       font-size: 1.2rem;
-       margin: 0 0 2rem 0;
-       line-height: 1.6;
+     .welcome-subtitle {
+       color: var(--text-light);
+       font-size: 1.1rem;
+       text-align: center;
+       margin-bottom: 2.5rem;
+       line-height: 1.8;
+       opacity: 0.85;
      }
 
      .quiz-info {
-       background: #f7fafc;
-       padding: 1.5rem;
-       border-radius: 15px;
-       margin-bottom: 2rem;
-       border-right: 5px solid #667eea;
+       background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(240, 147, 251, 0.05) 100%);
+       border: 1px solid rgba(240, 147, 251, 0.2);
+       padding: 2rem;
+       border-radius: 20px;
+       margin-bottom: 2.5rem;
+       backdrop-filter: blur(10px);
      }
 
      .quiz-info-item {
        display: flex;
        align-items: center;
+       justify-content: flex-end;
+       gap: 1rem;
+       color: var(--text-light);
+       font-size: 1.05rem;
+       margin-bottom: 0.8rem;
+       padding: 0.5rem 0;
+     }
+
+     .quiz-info-item span:first-child {
+       font-size: 1.5rem;
+     }
+
+     .button-group {
+       display: flex;
+       gap: 1rem;
        justify-content: center;
-       gap: 0.5rem;
-       color: #2d3748;
-       font-size: 1.1rem;
-       margin: 0.5rem 0;
-       font-weight: 600;
+       flex-wrap: wrap;
+       margin-top: 2rem;
      }
 
      .start-btn {
-       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-       color: white;
+       flex: 1;
+       min-width: 200px;
+       padding: 1.3rem 2.5rem;
+       font-size: 1.2rem;
+       font-weight: 700;
        border: none;
-       padding: 1.2rem 3rem;
-       font-size: 1.3rem;
-       font-weight: 700;
-       border-radius: 50px;
+       border-radius: 20px;
+       background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+       color: white;
        cursor: pointer;
        transition: all 0.3s ease;
-       box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-     }
-
-     .start-btn:hover {
-       transform: translateY(-3px);
-       box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-     }
-
-     .quiz-screen {
-       display: none;
-       background: rgba(255, 255, 255, 0.98);
-       padding: 2rem;
-       border-radius: 25px;
-       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-     }
-
-     .quiz-header {
-       display: flex;
-       justify-content: space-between;
-       align-items: center;
-       margin-bottom: 2rem;
-       padding-bottom: 1rem;
-       border-bottom: 3px solid #e2e8f0;
-       flex-wrap: wrap;
-       gap: 1rem;
-     }
-
-     .student-badge {
-       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-       color: white;
-       padding: 0.6rem 1.5rem;
-       border-radius: 25px;
-       font-weight: 700;
-       font-size: 1rem;
-       box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-       display: flex;
-       align-items: center;
-       gap: 0.5rem;
-     }
-
-     .progress-info {
-       font-size: 1.1rem;
-       color: #4a5568;
-       font-weight: 600;
-     }
-
-     .score-badge {
-       background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-       color: white;
-       padding: 0.6rem 1.5rem;
-       border-radius: 25px;
-       font-weight: 700;
-       font-size: 1.1rem;
-       box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
-     }
-
-     .timer {
-       background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-       color: white;
-       padding: 0.6rem 1.5rem;
-       border-radius: 25px;
-       font-weight: 700;
-       font-size: 1.1rem;
-       box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
-       transition: all 0.3s;
-     }
-
-     .timer.warning {
-       background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
-       animation: pulse 1s infinite;
-     }
-
-     .progress-bar-container {
-       background: #e2e8f0;
-       height: 12px;
-       border-radius: 10px;
-       overflow: hidden;
-       margin-bottom: 2rem;
-     }
-
-     .progress-bar {
-       background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-       height: 100%;
-       transition: width 0.5s ease;
-       border-radius: 10px;
-     }
-
-     .question-card {
-       margin-bottom: 2rem;
-     }
-
-     .question-number {
-       display: inline-block;
-       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-       color: white;
-       padding: 0.5rem 1.2rem;
-       border-radius: 10px;
-       font-weight: 700;
-       font-size: 1rem;
-       margin-bottom: 1.5rem;
-     }
-
-     .question-text {
-       color: #1a202c;
-       font-size: 1.6rem;
-       line-height: 1.9;
-       margin-bottom: 2rem;
-       font-weight: 700;
-     }
-
-     .options-container {
-       display: flex;
-       flex-direction: column;
-       gap: 1rem;
-     }
-
-     .option-btn {
-       background: #f7fafc;
-       border: 3px solid #e2e8f0;
-       padding: 1.2rem 1.5rem;
-       border-radius: 15px;
-       text-align: right;
-       cursor: pointer;
-       transition: all 0.3s ease;
-       font-size: 1.1rem;
-       color: #2d3748;
-       font-weight: 600;
+       box-shadow: 0 15px 40px rgba(240, 147, 251, 0.3);
        position: relative;
        overflow: hidden;
      }
 
+     .start-btn::before {
+       content: '';
+       position: absolute;
+       top: 0;
+       left: -100%;
+       width: 100%;
+       height: 100%;
+       background: rgba(255, 255, 255, 0.3);
+       transition: left 0.5s;
+     }
+
+     .start-btn:hover::before {
+       left: 100%;
+     }
+
+     .start-btn:hover {
+       transform: translateY(-5px);
+       box-shadow: 0 20px 50px rgba(240, 147, 251, 0.5);
+     }
+
+     .logout-btn {
+       flex: 1;
+       min-width: 200px;
+       padding: 1.3rem 2.5rem;
+       font-size: 1.2rem;
+       font-weight: 700;
+       border: 2px solid var(--error);
+       border-radius: 20px;
+       background: transparent;
+       color: var(--error);
+       cursor: pointer;
+       transition: all 0.3s ease;
+     }
+
+     .logout-btn:hover {
+       background: var(--error);
+       color: white;
+       transform: translateY(-3px);
+     }
+
+     /* شاشة الاختبار */
+     .quiz-screen {
+       background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.98) 100%);
+       backdrop-filter: blur(20px);
+       border: 1px solid rgba(240, 147, 251, 0.2);
+       border-radius: 40px;
+       padding: 2.5rem;
+       max-width: 900px;
+       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+       position: relative;
+     }
+
+     .quiz-header {
+       display: grid;
+       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+       gap: 1rem;
+       margin-bottom: 2.5rem;
+       padding-bottom: 2rem;
+       border-bottom: 2px solid rgba(240, 147, 251, 0.2);
+     }
+
+     .header-item {
+       background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(240, 147, 251, 0.05) 100%);
+       border: 1px solid rgba(240, 147, 251, 0.2);
+       padding: 1.2rem;
+       border-radius: 15px;
+       text-align: center;
+       backdrop-filter: blur(10px);
+       transition: all 0.3s ease;
+     }
+
+     .header-item:hover {
+       border-color: var(--accent);
+       box-shadow: 0 5px 20px rgba(240, 147, 251, 0.15);
+     }
+
+     .header-item .label {
+       color: rgba(226, 232, 240, 0.6);
+       font-size: 0.85rem;
+       font-weight: 600;
+       margin-bottom: 0.5rem;
+       text-transform: uppercase;
+       letter-spacing: 1px;
+     }
+
+     .header-item .value {
+       color: var(--accent);
+       font-size: 1.8rem;
+       font-weight: 800;
+       background: linear-gradient(135deg, #f093fb 0%, #667eea 100%);
+       -webkit-background-clip: text;
+       -webkit-text-fill-color: transparent;
+       background-clip: text;
+     }
+
+     .timer {
+       grid-column: span 1;
+     }
+
+     .timer.warning {
+       background: linear-gradient(135deg, rgba(245, 101, 101, 0.2) 0%, rgba(229, 62, 62, 0.1) 100%);
+       border-color: var(--error);
+       animation: pulse 1s infinite;
+     }
+
+     .timer.warning .value {
+       color: var(--error);
+       -webkit-text-fill-color: unset;
+     }
+
+     .progress-bar-container {
+       width: 100%;
+       height: 8px;
+       background: rgba(240, 147, 251, 0.1);
+       border-radius: 10px;
+       overflow: hidden;
+       margin-bottom: 2rem;
+       border: 1px solid rgba(240, 147, 251, 0.2);
+     }
+
+     .progress-bar {
+       height: 100%;
+       background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 100%);
+       border-radius: 10px;
+       transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+       box-shadow: 0 0 20px rgba(240, 147, 251, 0.5);
+     }
+
+     .question-card {
+       margin-bottom: 2.5rem;
+     }
+
+     .question-number {
+       display: inline-block;
+       background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+       color: white;
+       padding: 0.6rem 1.5rem;
+       border-radius: 20px;
+       font-weight: 700;
+       font-size: 0.95rem;
+       margin-bottom: 1.5rem;
+       text-transform: uppercase;
+       letter-spacing: 1px;
+       box-shadow: 0 5px 15px rgba(240, 147, 251, 0.3);
+     }
+
+     .question-text {
+       color: var(--text-light);
+       font-size: 1.8rem;
+       line-height: 2;
+       margin-bottom: 2.5rem;
+       font-weight: 700;
+     }
+
+     .options-container {
+       display: grid;
+       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+       gap: 1.2rem;
+     }
+
+     .option-btn {
+       background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(240, 147, 251, 0.05) 100%);
+       border: 2px solid rgba(240, 147, 251, 0.2);
+       padding: 1.5rem;
+       border-radius: 20px;
+       text-align: right;
+       cursor: pointer;
+       transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+       font-size: 1.05rem;
+       color: var(--text-light);
+       font-weight: 600;
+       position: relative;
+       overflow: hidden;
+       backdrop-filter: blur(10px);
+       display: flex;
+       align-items: center;
+       justify-content: flex-end;
+       gap: 1rem;
+     }
+
+     .option-btn::before {
+       content: '';
+       position: absolute;
+       top: 0;
+       left: 0;
+       right: 0;
+       bottom: 0;
+       background: linear-gradient(135deg, rgba(240, 147, 251, 0.2) 0%, transparent 100%);
+       opacity: 0;
+       transition: opacity 0.3s;
+     }
+
      .option-btn:hover {
-       border-color: #667eea;
-       background: #edf2f7;
+       border-color: var(--accent);
+       background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(240, 147, 251, 0.1) 100%);
        transform: translateX(-5px);
+       box-shadow: 0 10px 30px rgba(240, 147, 251, 0.2);
      }
 
      .option-btn.selected {
-       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-       border-color: #667eea;
+       background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+       border-color: var(--accent);
        color: white;
+       box-shadow: 0 15px 40px rgba(240, 147, 251, 0.4);
        transform: scale(1.02);
      }
 
      .option-btn.correct {
-       background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-       border-color: #48bb78;
+       background: linear-gradient(135deg, var(--success) 0%, #38a169 100%);
+       border-color: var(--success);
        color: white;
        animation: correctAnswer 0.6s ease;
+       box-shadow: 0 15px 40px rgba(72, 187, 120, 0.3);
      }
 
      .option-btn.wrong {
-       background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
-       border-color: #f56565;
+       background: linear-gradient(135deg, var(--error) 0%, #e53e3e 100%);
+       border-color: var(--error);
        color: white;
        animation: wrongAnswer 0.6s ease;
+       box-shadow: 0 15px 40px rgba(245, 101, 101, 0.3);
+     }
+
+     .option-btn.disabled {
+       cursor: not-allowed;
+       opacity: 0.6;
      }
 
      @keyframes correctAnswer {
        0%, 100% { transform: scale(1); }
-       50% { transform: scale(1.05); }
+       50% { transform: scale(1.08); }
      }
 
      @keyframes wrongAnswer {
@@ -451,55 +611,59 @@
        75% { transform: translateX(10px); }
      }
 
-     .option-btn.disabled {
-       cursor: not-allowed;
-       opacity: 0.7;
-     }
-
      .option-label {
-       display: inline-block;
-       width: 35px;
-       height: 35px;
-       background: #cbd5e0;
-       color: #2d3748;
+       display: inline-flex;
+       align-items: center;
+       justify-content: center;
+       width: 40px;
+       height: 40px;
+       background: rgba(255, 255, 255, 0.2);
        border-radius: 50%;
-       text-align: center;
-       line-height: 35px;
-       margin-left: 1rem;
        font-weight: 700;
-       font-size: 1rem;
-     }
-
-     .option-btn.selected .option-label,
-     .option-btn.correct .option-label,
-     .option-btn.wrong .option-label {
-       background: rgba(255, 255, 255, 0.3);
-       color: white;
+       font-size: 1.1rem;
+       flex-shrink: 0;
      }
 
      .next-btn {
-       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-       color: white;
-       border: none;
-       padding: 1rem 2.5rem;
-       font-size: 1.2rem;
+       width: 100%;
+       padding: 1.3rem;
+       font-size: 1.1rem;
        font-weight: 700;
-       border-radius: 15px;
+       border: none;
+       border-radius: 20px;
+       background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+       color: white;
        cursor: pointer;
        transition: all 0.3s ease;
        margin-top: 2rem;
-       width: 100%;
-       box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
        display: none;
+       box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+       position: relative;
+       overflow: hidden;
      }
 
      .next-btn.show {
        display: block;
      }
 
+     .next-btn::before {
+       content: '';
+       position: absolute;
+       top: 0;
+       left: -100%;
+       width: 100%;
+       height: 100%;
+       background: rgba(255, 255, 255, 0.3);
+       transition: left 0.5s;
+     }
+
+     .next-btn:hover:not(:disabled)::before {
+       left: 100%;
+     }
+
      .next-btn:hover:not(:disabled) {
-       transform: translateY(-2px);
-       box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+       transform: translateY(-3px);
+       box-shadow: 0 15px 40px rgba(240, 147, 251, 0.5);
      }
 
      .next-btn:disabled {
@@ -507,126 +671,271 @@
        cursor: not-allowed;
      }
 
+     /* شاشة النتائج */
      .results-screen {
-       display: none;
-       background: rgba(255, 255, 255, 0.98);
-       padding: 3rem 2rem;
-       border-radius: 25px;
+       background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.98) 100%);
+       backdrop-filter: blur(20px);
+       border: 1px solid rgba(240, 147, 251, 0.2);
+       border-radius: 40px;
+       padding: 4rem 3rem;
+       max-width: 900px;
+       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+       position: relative;
+       overflow: hidden;
        text-align: center;
-       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+     }
+
+     .results-screen::before {
+       content: '';
+       position: absolute;
+       top: -50%;
+       left: -50%;
+       width: 500px;
+       height: 500px;
+       background: radial-gradient(circle, rgba(240, 147, 251, 0.1) 0%, transparent 70%);
+       border-radius: 50%;
      }
 
      .results-icon {
-       font-size: 5rem;
-       margin-bottom: 1.5rem;
+       font-size: 6rem;
+       margin-bottom: 2rem;
+       animation: float 3s ease-in-out infinite;
      }
 
      .results-title {
-       color: #2d3748;
-       font-size: 2.5rem;
-       margin: 0 0 1rem 0;
-       font-weight: 800;
-     }
-
-     .final-score {
-       font-size: 4rem;
+       color: var(--accent);
+       font-size: 2.8rem;
        font-weight: 900;
-       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+       margin-bottom: 1.5rem;
+       background: linear-gradient(135deg, #f093fb 0%, #667eea 100%);
        -webkit-background-clip: text;
        -webkit-text-fill-color: transparent;
        background-clip: text;
-       margin: 1rem 0;
+     }
+
+     .final-score {
+       font-size: 5rem;
+       font-weight: 900;
+       background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+       -webkit-background-clip: text;
+       -webkit-text-fill-color: transparent;
+       background-clip: text;
+       margin: 1.5rem 0;
+       animation: glow 2s ease-in-out infinite;
      }
 
      .results-message {
-       color: #4a5568;
-       font-size: 1.3rem;
-       margin: 1.5rem 0;
-       line-height: 1.6;
+       color: var(--text-light);
+       font-size: 1.4rem;
+       margin: 2rem 0;
+       line-height: 1.8;
+       opacity: 0.9;
      }
 
      .results-stats {
        display: grid;
-       grid-template-columns: repeat(4, 1fr);
-       gap: 1rem;
-       margin: 2rem 0;
+       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+       gap: 1.5rem;
+       margin: 3rem 0;
      }
 
      .stat-card {
-       background: #f7fafc;
-       padding: 1.5rem;
-       border-radius: 15px;
-       border-top: 4px solid #667eea;
+       background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(240, 147, 251, 0.05) 100%);
+       border: 1px solid rgba(240, 147, 251, 0.2);
+       padding: 2rem 1.5rem;
+       border-radius: 20px;
+       backdrop-filter: blur(10px);
+       transition: all 0.3s ease;
+       cursor: pointer;
+     }
+
+     .stat-card:hover {
+       border-color: var(--accent);
+       transform: translateY(-5px);
+       box-shadow: 0 15px 40px rgba(240, 147, 251, 0.2);
      }
 
      .stat-value {
-       font-size: 2rem;
-       font-weight: 800;
-       color: #2d3748;
-       margin-bottom: 0.5rem;
+       font-size: 2.5rem;
+       font-weight: 900;
+       color: var(--accent);
+       margin-bottom: 0.8rem;
+       background: linear-gradient(135deg, #f093fb 0%, #667eea 100%);
+       -webkit-background-clip: text;
+       -webkit-text-fill-color: transparent;
+       background-clip: text;
      }
 
      .stat-label {
-       color: #4a5568;
+       color: rgba(226, 232, 240, 0.7);
        font-size: 1rem;
        font-weight: 600;
+       text-transform: uppercase;
+       letter-spacing: 1px;
      }
 
      .restart-btn {
-       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-       color: white;
-       border: none;
-       padding: 1.2rem 3rem;
-       font-size: 1.3rem;
+       min-width: 250px;
+       padding: 1.3rem 2.5rem;
+       font-size: 1.2rem;
        font-weight: 700;
-       border-radius: 50px;
+       border: none;
+       border-radius: 20px;
+       background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+       color: white;
        cursor: pointer;
        transition: all 0.3s ease;
-       margin-top: 1rem;
-       box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+       margin-top: 2rem;
+       box-shadow: 0 15px 40px rgba(240, 147, 251, 0.3);
+       position: relative;
+       overflow: hidden;
+       display: inline-block;
+       margin-right: 1rem;
+     }
+
+     .restart-btn::before {
+       content: '';
+       position: absolute;
+       top: 0;
+       left: -100%;
+       width: 100%;
+       height: 100%;
+       background: rgba(255, 255, 255, 0.3);
+       transition: left 0.5s;
+     }
+
+     .restart-btn:hover::before {
+       left: 100%;
      }
 
      .restart-btn:hover {
-       transform: translateY(-3px);
-       box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+       transform: translateY(-5px);
+       box-shadow: 0 20px 50px rgba(240, 147, 251, 0.5);
      }
 
-     .logout-btn {
-       background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
-       color: white;
+     /* أزرار التحكم */
+     .control-btn {
+       position: fixed;
+       width: 55px;
+       height: 55px;
+       border-radius: 50%;
        border: none;
-       padding: 0.8rem 1.5rem;
-       font-size: 1rem;
-       font-weight: 700;
-       border-radius: 25px;
        cursor: pointer;
        transition: all 0.3s ease;
-       margin-left: 1rem;
-       box-shadow: 0 4px 15px rgba(245, 101, 101, 0.3);
-     }
-
-     .logout-btn:hover {
-       transform: translateY(-2px);
-       box-shadow: 0 6px 20px rgba(245, 101, 101, 0.5);
-     }
-
-     .button-group {
+       z-index: 100;
        display: flex;
-       gap: 1rem;
-       justify-content: center;
        align-items: center;
-       flex-wrap: wrap;
+       justify-content: center;
+       font-size: 1.5rem;
+       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
      }
 
+     .dark-mode-toggle {
+       top: 2rem;
+       left: 2rem;
+       background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(240, 147, 251, 0.9) 100%);
+       border: 2px solid rgba(240, 147, 251, 0.4);
+       color: white;
+     }
+
+     .sound-toggle {
+       top: 2rem;
+       left: 6.5rem;
+       background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(240, 147, 251, 0.9) 100%);
+       border: 2px solid rgba(240, 147, 251, 0.4);
+       color: white;
+     }
+
+     .control-btn:hover {
+       transform: scale(1.1);
+       box-shadow: 0 8px 30px rgba(240, 147, 251, 0.4);
+     }
+
+     /* الوضع الليلي */
+     body.dark-mode {
+       background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #2d1b3d 100%);
+     }
+
+     /* Responsive */
      @media (max-width: 768px) {
-       .welcome-title,
-       .login-title {
-         font-size: 1.8rem;
+       .container {
+         padding: 1rem;
        }
 
-       .welcome-subtitle,
-       .login-subtitle {
-         font-size: 1rem;
+       .login-screen,
+       .welcome-screen,
+       .quiz-screen,
+       .results-screen {
+         border-radius: 25px;
+         padding: 2rem 1.5rem;
+       }
+
+       .welcome-title,
+       .login-title,
+       .results-title {
+         font-size: 2rem;
+       }
+
+       .final-score {
+         font-size: 3rem;
+       }
+
+       .question-text {
+         font-size: 1.4rem;
+       }
+
+       .options-container {
+         grid-template-columns: 1fr;
+       }
+
+       .results-stats {
+         grid-template-columns: repeat(2, 1fr);
+       }
+
+       .quiz-header {
+         grid-template-columns: repeat(2, 1fr);
+       }
+
+       .button-group {
+         flex-direction: column;
+       }
+
+       .start-btn,
+       .logout-btn {
+         min-width: 100%;
+       }
+
+       .control-btn {
+         width: 45px;
+         height: 45px;
+         font-size: 1.2rem;
+       }
+
+       .dark-mode-toggle {
+         top: 1rem;
+         left: 1rem;
+       }
+
+       .sound-toggle {
+         top: 1rem;
+         left: 5rem;
+       }
+     }
+
+     @media (max-width: 480px) {
+       .welcome-title,
+       .login-title,
+       .results-title {
+         font-size: 1.6rem;
+       }
+
+       .welcome-icon,
+       .results-icon {
+         font-size: 3rem;
+       }
+
+       .final-score {
+         font-size: 2.5rem;
        }
 
        .question-text {
@@ -634,161 +943,141 @@
        }
 
        .option-btn {
-         font-size: 1rem;
          padding: 1rem;
+         font-size: 0.95rem;
        }
 
        .results-stats {
-         grid-template-columns: repeat(2, 1fr);
-       }
-
-       .final-score {
-         font-size: 3rem;
+         grid-template-columns: 1fr;
        }
 
        .quiz-header {
-         justify-content: center;
-         text-align: center;
+         grid-template-columns: 1fr;
        }
 
-       .student-badge {
-         font-size: 0.9rem;
-         padding: 0.5rem 1rem;
+       .results-screen {
+         padding: 1.5rem 1rem;
        }
-
-       .timer {
-         font-size: 1rem;
-         padding: 0.5rem 1rem;
-       }
-
-       .dark-mode-toggle,
-       .sound-toggle {
-         width: 40px;
-         height: 40px;
-         font-size: 1.2rem;
-       }
-
-       .sound-toggle {
-         left: 5rem;
-       }
-     }
-
-     .login-screen {
-       display: none;
-     }
-
-     .login-screen.show {
-       display: flex;
-     }
-
-     .login-input::placeholder {
-       color: #a0aec0;
-     }
-
-     body.dark-mode .login-input::placeholder {
-       color: #718096;
      }
    </style>
    <style>@view-transition { navigation: auto; }</style>
    <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
-   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
  </head>
  <body>
    <div class="container">
      <main>
        <!-- شاشة تسجيل الدخول -->
        <div class="login-screen show" id="login-screen">
-         <button class="dark-mode-toggle" onclick="toggleDarkMode()" id="dark-toggle-login" title="تبديل الوضع الليلي"> 🌙 </button>
-         <button class="sound-toggle" onclick="toggleSound()" id="sound-toggle-login" title="تبديل الصوت"> 🔊 </button>
-         <div style="text-align: center;">
-           <div class="welcome-icon">👨‍🎓</div>
-           <h1 class="login-title">تسجيل الدخول</h1>
-           <p class="login-subtitle">يرجى إدخال بيانات الدخول الخاصة بك</p>
+         <h1 class="login-title">🎓 تسجيل الدخول</h1>
+         <p class="login-subtitle">ادخل بيانات حسابك للبدء بالاختبار</p>
+         
+         <div class="login-form-group">
+           <label>اسمك الكامل</label>
+           <input type="text" id="student-name-input" class="login-input" placeholder="مثال: أحمد محمد" />
          </div>
-         <input type="text" id="student-name-input" class="login-input" placeholder="أدخل اسمك الكامل" />
-         <input type="password" id="student-password-input" class="login-input" placeholder="كلمة المرور" />
-         <input type="email" id="student-email-input" class="login-input" placeholder="البريد الإلكتروني (اختياري)" />
-         <button class="login-button" onclick="loginUser()">دخول الآن</button>
+
+         <div class="login-form-group">
+           <label>كلمة المرور</label>
+           <input type="password" id="student-password-input" class="login-input" placeholder="أدخل كلمة المرور" />
+         </div>
+
+         <div class="login-form-group">
+           <label>البريد الإلكتروني (اختياري)</label>
+           <input type="email" id="student-email-input" class="login-input" placeholder="example@mail.com" />
+         </div>
+
+         <button class="login-button" onclick="loginUser()">دخول 🚀</button>
        </div>
 
        <!-- شاشة الترحيب -->
        <div class="welcome-screen" id="welcome-screen">
-         <button class="dark-mode-toggle" onclick="toggleDarkMode()" id="dark-toggle-welcome" title="تبديل الوضع الليلي"> 🌙 </button>
-         <button class="sound-toggle" onclick="toggleSound()" id="sound-toggle-welcome" title="تبديل الصوت"> 🔊 </button>
-         <div style="text-align: center;">
-           <div class="welcome-icon">📚</div>
-           <h1 class="welcome-title" id="main-title">اختبار تاريخ العراق التفاعلي</h1>
-           <p class="welcome-subtitle" id="subtitle">اختبر معلوماتك حول فترة حكم حزب البعث من خلال 50 سؤالاً متنوعاً</p>
-         </div>
+         <div class="welcome-icon">📚</div>
+         <h1 class="welcome-title">اختبار تاريخ العراق التفاعلي</h1>
+         <p class="welcome-subtitle">اختبر معلوماتك حول فترة حكم حزب البعث من خلال 50 سؤالاً متنوعاً وشيقاً</p>
+         
          <div class="quiz-info">
-           <div class="quiz-info-item"><span>📝</span> <span>30 سؤال اختيار متعدد</span></div>
-           <div class="quiz-info-item"><span>✅</span> <span>20 سؤال صح وخطأ</span></div>
-           <div class="quiz-info-item"><span>⏱️</span> <span>وقت محدود: 60 دقيقة</span></div>
-           <div class="quiz-info-item" style="margin-top: 1rem; padding-top: 1rem; border-top: 2px solid #e2e8f0;"><span>👨‍🎓</span> <span id="current-student">الطالب: الجديد</span></div>
+           <div class="quiz-info-item"><span>📝</span> 30 سؤال اختيار متعدد</div>
+           <div class="quiz-info-item"><span>✅</span> 20 سؤال صح وخطأ</div>
+           <div class="quiz-info-item"><span>⏱️</span> وقت محدود: 60 دقيقة</div>
+           <div class="quiz-info-item"><span>🎯</span> تحديات وإحصائيات شاملة</div>
+           <div class="quiz-info-item"><span>👨‍🎓</span> <span id="current-student">الطالب: الجديد</span></div>
          </div>
+
          <div class="button-group">
-           <button class="start-btn" id="start-btn" onclick="startQuiz()">ابدأ الاختبار الآن</button>
+           <button class="start-btn" onclick="startQuiz()">ابدأ الاختبار الآن 🚀</button>
            <button class="logout-btn" onclick="logoutUser()">تغيير المستخدم</button>
          </div>
        </div>
 
        <!-- شاشة الاختبار -->
        <div class="quiz-screen" id="quiz-screen">
-         <button class="dark-mode-toggle" onclick="toggleDarkMode()" id="dark-toggle-quiz" title="تبديل الوضع الليلي"> 🌙 </button>
-         <button class="sound-toggle" onclick="toggleSound()" id="sound-toggle-quiz" title="تبديل الصوت"> 🔊 </button>
          <div class="quiz-header">
-           <div class="progress-info"><span>السؤال </span> <span id="current-question">1</span> <span> من </span> <span id="total-questions">50</span></div>
-           <div class="student-badge"><span>👨‍🎓</span> <span id="quiz-student-name">الطالب</span></div>
-           <div class="score-badge"><span>النقاط: </span> <span id="current-score">0</span></div>
-           <div class="timer" id="timer"><span>⏱️ </span><span id="time-left">60:00</span></div>
+           <div class="header-item">
+             <div class="label">السؤال</div>
+             <div class="value"><span id="current-question">1</span>/<span id="total-questions">50</span></div>
+           </div>
+           <div class="header-item">
+             <div class="label">النقاط</div>
+             <div class="value" id="current-score">0</div>
+           </div>
+           <div class="header-item timer">
+             <div class="label">⏱️ الوقت</div>
+             <div class="value" id="time-left">60:00</div>
+           </div>
          </div>
+
          <div class="progress-bar-container">
            <div class="progress-bar" id="progress-bar"></div>
          </div>
+
          <div class="question-card">
            <div class="question-number" id="question-number">السؤال 1</div>
            <div class="question-text" id="question-text"></div>
            <div class="options-container" id="options-container"></div>
          </div>
-         <button class="next-btn" id="next-btn" onclick="nextQuestion()"> السؤال التالي ← </button>
+
+         <button class="next-btn" id="next-btn" onclick="nextQuestion()">السؤال التالي ←</button>
        </div>
 
        <!-- شاشة النتائج -->
        <div class="results-screen" id="results-screen">
-         <button class="dark-mode-toggle" onclick="toggleDarkMode()" id="dark-toggle-results" title="تبديل الوضع الليلي"> 🌙 </button>
-         <button class="sound-toggle" onclick="toggleSound()" id="sound-toggle-results" title="تبديل الصوت"> 🔊 </button>
          <div class="results-icon" id="results-icon">🎉</div>
          <h2 class="results-title">انتهى الاختبار!</h2>
          <div class="final-score" id="final-score">0/50</div>
          <p class="results-message" id="results-message"></p>
+
          <div class="results-stats">
            <div class="stat-card">
              <div class="stat-value" id="correct-answers">0</div>
-             <div class="stat-label">إجابات صحيحة</div>
+             <div class="stat-label">✅ إجابات صحيحة</div>
            </div>
            <div class="stat-card">
              <div class="stat-value" id="wrong-answers">0</div>
-             <div class="stat-label">إجابات خاطئة</div>
+             <div class="stat-label">❌ إجابات خاطئة</div>
            </div>
            <div class="stat-card">
              <div class="stat-value" id="percentage">0%</div>
-             <div class="stat-label">نسبة النجاح</div>
+             <div class="stat-label">📊 نسبة النجاح</div>
            </div>
            <div class="stat-card">
              <div class="stat-value" id="time-taken">0:00</div>
-             <div class="stat-label">الوقت المستغرق</div>
+             <div class="stat-label">⏱️ الوقت المستغرق</div>
            </div>
          </div>
-         <div class="button-group">
+
+         <div style="text-align: center;">
            <button class="restart-btn" onclick="restartQuiz()">إعادة الاختبار 🔄</button>
-           <button class="logout-btn" onclick="logoutUser()">الخروج</button>
+           <button class="logout-btn" style="display: inline-block; background: transparent; border: 2px solid var(--error); color: var(--error);" onclick="logoutUser()">الخروج</button>
          </div>
        </div>
      </main>
    </div>
 
+   <!-- أزرار التحكم -->
+   <button class="control-btn dark-mode-toggle" onclick="toggleDarkMode()" title="تبديل الوضع الليلي">🌙</button>
+   <button class="control-btn sound-toggle" onclick="toggleSound()" title="تبديل الصوت">🔊</button>
+
    <script>
-     // تكوين الاختبار
      const defaultConfig = {
        main_title: "اختبار تاريخ العراق التفاعلي",
        subtitle: "اختبر معلوماتك حول فترة حكم حزب البعث من خلال 50 سؤالاً متنوعاً",
@@ -800,10 +1089,9 @@
        error_color: "#f56565",
        font_family: "Cairo",
        font_size: 16,
-       time_limit: 3600 // 60 دقيقة
+       time_limit: 3600
      };
 
-     // أسئلة الاختبار
      const quizData = [
        {
          type: "mcq",
@@ -1087,7 +1375,6 @@
        }
      ];
 
-     // متغيرات الحالة
      let currentQuestionIndex = 0;
      let score = 0;
      let selectedAnswer = null;
@@ -1100,14 +1387,11 @@
      let timeRemaining = defaultConfig.time_limit;
      let timerInterval = null;
 
-     // دوال الصوت
      function playSound(type) {
        if (!isSoundEnabled) return;
-       
        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
        const oscillator = audioContext.createOscillator();
        const gainNode = audioContext.createGain();
-       
        oscillator.connect(gainNode);
        gainNode.connect(audioContext.destination);
        
@@ -1123,61 +1407,34 @@
          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
          oscillator.start(audioContext.currentTime);
          oscillator.stop(audioContext.currentTime + 0.4);
-       } else if (type === 'next') {
-         oscillator.frequency.value = 600;
-         gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-         oscillator.start(audioContext.currentTime);
-         oscillator.stop(audioContext.currentTime + 0.2);
        }
      }
 
-     // تبديل الصوت
      function toggleSound() {
        isSoundEnabled = !isSoundEnabled;
-       const allSoundToggles = document.querySelectorAll('.sound-toggle');
-       allSoundToggles.forEach(toggle => {
-         toggle.textContent = isSoundEnabled ? '🔊' : '🔇';
-       });
+       document.querySelector('.sound-toggle').textContent = isSoundEnabled ? '🔊' : '🔇';
        localStorage.setItem('soundEnabled', isSoundEnabled ? 'true' : 'false');
      }
 
-     // تبديل الوضع الليلي
      function toggleDarkMode() {
        isDarkMode = !isDarkMode;
        document.body.classList.toggle('dark-mode');
-       
-       const allToggles = document.querySelectorAll('.dark-mode-toggle');
-       allToggles.forEach(toggle => {
-         toggle.textContent = isDarkMode ? '☀️' : '🌙';
-       });
-       
+       document.querySelector('.dark-mode-toggle').textContent = isDarkMode ? '☀️' : '🌙';
        localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
      }
 
-     // تحميل التفضيلات
      function loadPreferences() {
-       const darkModePreference = localStorage.getItem('darkMode');
-       if (darkModePreference === 'enabled') {
+       if (localStorage.getItem('darkMode') === 'enabled') {
          isDarkMode = true;
          document.body.classList.add('dark-mode');
-         const allToggles = document.querySelectorAll('.dark-mode-toggle');
-         allToggles.forEach(toggle => {
-           toggle.textContent = '☀️';
-         });
+         document.querySelector('.dark-mode-toggle').textContent = '☀️';
        }
-
-       const soundPreference = localStorage.getItem('soundEnabled');
-       if (soundPreference === 'false') {
+       if (localStorage.getItem('soundEnabled') === 'false') {
          isSoundEnabled = false;
-         const allSoundToggles = document.querySelectorAll('.sound-toggle');
-         allSoundToggles.forEach(toggle => {
-           toggle.textContent = '🔇';
-         });
+         document.querySelector('.sound-toggle').textContent = '🔇';
        }
      }
 
-     // تسجيل الدخول
      function loginUser() {
        const name = document.getElementById('student-name-input').value.trim();
        const password = document.getElementById('student-password-input').value.trim();
@@ -1187,51 +1444,35 @@
          alert('يرجى إدخال اسمك');
          return;
        }
-
        if (!password) {
          alert('يرجى إدخال كلمة المرور');
          return;
        }
 
-       // حفظ بيانات الطالب
-       currentStudent = {
-         name: name,
-         password: password,
-         email: email,
-         loginTime: new Date()
-       };
-
-       // حفظ في LocalStorage
+       currentStudent = { name, password, email, loginTime: new Date() };
        localStorage.setItem('currentStudent', JSON.stringify(currentStudent));
 
-       // إظهار شاشة الترحيب
        document.getElementById('login-screen').classList.remove('show');
-       document.getElementById('login-screen').style.display = 'none';
-       document.getElementById('welcome-screen').style.display = 'block';
+       document.getElementById('welcome-screen').classList.add('show');
        document.getElementById('current-student').textContent = `الطالب: ${name}`;
 
-       // تنظيف حقول الإدخال
        document.getElementById('student-name-input').value = '';
        document.getElementById('student-password-input').value = '';
        document.getElementById('student-email-input').value = '';
      }
 
-     // تسجيل الخروج
      function logoutUser() {
        currentStudent = null;
        localStorage.removeItem('currentStudent');
        
-       // العودة إلى شاشة تسجيل الدخول
-       document.getElementById('welcome-screen').style.display = 'none';
-       document.getElementById('quiz-screen').style.display = 'none';
-       document.getElementById('results-screen').style.display = 'none';
-       document.getElementById('login-screen').style.display = 'flex';
+       document.getElementById('welcome-screen').classList.remove('show');
+       document.getElementById('quiz-screen').classList.remove('show');
+       document.getElementById('results-screen').classList.remove('show');
        document.getElementById('login-screen').classList.add('show');
 
        clearTimer();
      }
 
-     // خلط المصفوفة
      function shuffleArray(array) {
        const shuffled = [...array];
        for (let i = shuffled.length - 1; i > 0; i--) {
@@ -1241,7 +1482,6 @@
        return shuffled;
      }
 
-     // بدء الاختبار
      function startQuiz() {
        shuffledQuizData = shuffleArray(quizData);
        currentQuestionIndex = 0;
@@ -1249,16 +1489,13 @@
        quizStartTime = new Date();
        timeRemaining = defaultConfig.time_limit;
        
-       document.getElementById('welcome-screen').style.display = 'none';
-       document.getElementById('quiz-screen').style.display = 'block';
-       
-       document.getElementById('quiz-student-name').textContent = `الطالب: ${currentStudent.name}`;
+       document.getElementById('welcome-screen').classList.remove('show');
+       document.getElementById('quiz-screen').classList.add('show');
        
        loadQuestion();
        startTimer();
      }
 
-     // بدء المؤقت
      function startTimer() {
        timerInterval = setInterval(() => {
          timeRemaining--;
@@ -1267,13 +1504,12 @@
          if (timeRemaining <= 0) {
            clearTimer();
            finishQuiz();
-         } else if (timeRemaining <= 300) { // آخر 5 دقائق
+         } else if (timeRemaining <= 300) {
            document.getElementById('timer').classList.add('warning');
          }
        }, 1000);
      }
 
-     // إيقاف المؤقت
      function clearTimer() {
        if (timerInterval) {
          clearInterval(timerInterval);
@@ -1281,7 +1517,6 @@
        }
      }
 
-     // تحديث عرض المؤقت
      function updateTimerDisplay() {
        const minutes = Math.floor(timeRemaining / 60);
        const seconds = timeRemaining % 60;
@@ -1289,7 +1524,6 @@
          `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
      }
 
-     // تحميل السؤال
      function loadQuestion() {
        if (currentQuestionIndex >= shuffledQuizData.length) {
          finishQuiz();
@@ -1308,8 +1542,7 @@
        const progress = ((currentQuestionIndex) / shuffledQuizData.length) * 100;
        document.getElementById('progress-bar').style.width = progress + '%';
        
-       const nextBtn = document.getElementById('next-btn');
-       nextBtn.classList.remove('show');
+       document.getElementById('next-btn').classList.remove('show');
        
        const optionsContainer = document.getElementById('options-container');
        optionsContainer.innerHTML = '';
@@ -1321,10 +1554,7 @@
          shuffledOptions.forEach((option, index) => {
            const button = document.createElement('button');
            button.className = 'option-btn';
-           button.innerHTML = `
-             <span class="option-label">${labels[index]}</span>
-             ${option}
-           `;
+           button.innerHTML = `<span class="option-label">${labels[index]}</span><span>${option}</span>`;
            button.onclick = () => selectAnswer(option, button);
            optionsContainer.appendChild(button);
          });
@@ -1333,14 +1563,13 @@
          tfOptions.forEach((option) => {
            const button = document.createElement('button');
            button.className = 'option-btn';
-           button.innerHTML = option;
+           button.innerHTML = `<span class="option-label">${option === 'صح' ? '✅' : '❌'}</span><span>${option}</span>`;
            button.onclick = () => selectAnswer(option, button);
            optionsContainer.appendChild(button);
          });
        }
      }
 
-     // اختيار إجابة
      function selectAnswer(selectedOption, buttonElement) {
        if (answered) return;
        
@@ -1355,21 +1584,17 @@
          btn.classList.add('disabled');
        });
        
-       buttonElement.classList.add('selected');
-       
        if (selectedOption === question.correct) {
          score++;
-         buttonElement.classList.remove('selected');
          buttonElement.classList.add('correct');
          playSound('correct');
          document.getElementById('results-icon').textContent = '🎉';
        } else {
-         buttonElement.classList.remove('selected');
          buttonElement.classList.add('wrong');
          playSound('wrong');
          
          allButtons.forEach(btn => {
-           if (btn.innerHTML.includes(question.correct) || btn.textContent === question.correct) {
+           if (btn.innerHTML.includes(question.correct) || btn.innerHTML.includes(question.correct)) {
              btn.classList.add('correct');
            }
          });
@@ -1378,18 +1603,15 @@
        }
        
        document.getElementById('current-score').textContent = score;
-       const nextBtn = document.getElementById('next-btn');
-       nextBtn.classList.add('show');
+       document.getElementById('next-btn').classList.add('show');
      }
 
-     // السؤال التالي
      function nextQuestion() {
        playSound('next');
        currentQuestionIndex++;
        loadQuestion();
      }
 
-     // إنهاء الاختبار
      function finishQuiz() {
        clearTimer();
        const quizEndTime = new Date();
@@ -1398,7 +1620,6 @@
        showResults(timeTaken);
      }
 
-     // عرض النتائج
      function showResults(timeTaken = 0) {
        const totalQuestions = shuffledQuizData.length;
        const correctAnswers = score;
@@ -1408,8 +1629,8 @@
        const minutes = Math.floor(timeTaken / 60);
        const seconds = timeTaken % 60;
        
-       document.getElementById('quiz-screen').style.display = 'none';
-       document.getElementById('results-screen').style.display = 'block';
+       document.getElementById('quiz-screen').classList.remove('show');
+       document.getElementById('results-screen').classList.add('show');
        
        document.getElementById('final-score').textContent = `${score}/${totalQuestions}`;
        
@@ -1433,7 +1654,6 @@
        document.getElementById('time-taken').textContent = 
          `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-       // حفظ النتائج
        saveResults({
          studentName: currentStudent.name,
          score: score,
@@ -1445,22 +1665,18 @@
        });
      }
 
-     // حفظ النتائج
      function saveResults(results) {
        let allResults = JSON.parse(localStorage.getItem('quizResults')) || [];
        allResults.push(results);
        localStorage.setItem('quizResults', JSON.stringify(allResults));
-       console.log('النتائج المحفوظة:', results);
      }
 
-     // إعادة الاختبار
      function restartQuiz() {
-       document.getElementById('results-screen').style.display = 'none';
-       document.getElementById('welcome-screen').style.display = 'block';
+       document.getElementById('results-screen').classList.remove('show');
+       document.getElementById('welcome-screen').classList.add('show');
        document.getElementById('timer').classList.remove('warning');
      }
 
-     // تهيئة البرنامج
      window.addEventListener('DOMContentLoaded', loadPreferences);
    </script>
  </body>
